@@ -1,5 +1,5 @@
 package com.phasmidsoftware.dsaipg.adt.threesum;
-
+import java.util.Arrays;
 import com.phasmidsoftware.dsaipg.util.benchmark.Benchmark_Timer;
 import com.phasmidsoftware.dsaipg.util.benchmark.TimeLogger;
 import com.phasmidsoftware.dsaipg.util.config.Config;
@@ -102,8 +102,27 @@ public class ThreeSumBenchmark {
      */
     private void benchmarkThreeSum(final String description, final Consumer<int[]> function, int n, final TimeLogger[] timeLoggers) {
         if (description.equals("ThreeSumCubic") && n > 4000) return;
-        // TO BE IMPLEMENTED 
-                throw new RuntimeException("implementation missing");
+
+        long totalTime = 0;
+
+        // 執行多次取平均
+        for (int i = 0; i < runs; i++) {
+            int[] data = supplier.get();
+
+            long start = System.nanoTime();
+            function.accept(data);
+            long end = System.nanoTime();
+
+            totalTime += (end - start);
+        }
+
+        // 計算平均時間（毫秒）
+        double avgTimeMs = (totalTime / runs) / 1_000_000.0;
+
+        // 記錄結果
+        for (TimeLogger logger : timeLoggers) {
+            logger.log(description, avgTimeMs, n);
+        }
     }
 
     /**
