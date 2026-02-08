@@ -214,8 +214,32 @@ public class Timer {
      * @return the updated lastx value after status update.
      */
     private <T, U> int doRepeatForIteration(int n, boolean warmup, Supplier<T> supplier, Function<T, U> function, UnaryOperator<T> preFunction, Consumer<U> postFunction, int lastx, int i) {
-        // TO BE IMPLEMENTED : note that the timer should be paused when this method is invoked. You may use doPrintStatus to show progress (but optional).
-        // END SOLUTION
+        // Get test data
+        T t = supplier.get();
+
+        // Do pre-processing if needed
+        if (preFunction != null) {
+            t = preFunction.apply(t);
+        }
+
+        // Start timing
+        resume();
+
+        // Run the function we want to test
+        U u = function.apply(t);
+
+        // Stop timing and count one lap
+        pauseAndLap();
+
+        // Do post-processing if needed
+        if (postFunction != null) {
+            postFunction.accept(u);
+        }
+
+        // Show progress (optional)
+        int x = (int) ((i + 1.0) / n * 100);
+        lastx = doPrintStatus(lastx, x);
+
         return lastx;
     }
 
@@ -302,9 +326,7 @@ public class Timer {
      * @return the number of ticks for the system clock. Currently defined as nano time.
      */
     private static long getClock() {
-        // TO BE IMPLEMENTED 
-         return 0;
-        // END SOLUTION
+        return System.nanoTime();
     }
 
     static Consumer<String> progressFunction(boolean showProgress) {
@@ -320,9 +342,7 @@ public class Timer {
      * @return the corresponding number of milliseconds.
      */
     private static double toMillisecs(long ticks) {
-        // TO BE IMPLEMENTED 
-         return 0;
-        // END SOLUTION
+        return ticks / 1_000_000.0;
     }
 
     /**

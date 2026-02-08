@@ -62,11 +62,21 @@ public class InsertionSortComparator<X> extends SortWithHelper<X> {
      * @param from the index of the first element to sort
      * @param to   the index of the first element not to sort
      */
+    @Override
     public void sort(X[] xs, int from, int to) {
         final Helper<X> helper = getHelper();
 
-        // TO BE IMPLEMENTED 
-                throw new RuntimeException("implementation missing");
+        // Start from second element
+        for (int i = from + 1; i < to; i++) {
+            // Insert xs[i] into sorted part xs[from...i-1]
+            for (int j = i; j > from; j--) {
+                // Compare and swap if needed
+                // If swap returns false, we're done with this element
+                if (!helper.swapStableConditional(xs, j)) {
+                    break;
+                }
+            }
+        }
     }
 
     public static final String DESCRIPTION = "Insertion sort";
