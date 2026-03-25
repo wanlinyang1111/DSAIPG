@@ -110,41 +110,16 @@ public class QuickSort_DualPivot<X extends Comparable<X>> extends QuickSort<X> {
             X v2 = xs[p2];
             // NOTE: we are trying to avoid checking on instrumented for every time in the inner loop for performance reasons (probably a silly idea).
             // NOTE: if we were using Scala, it would be easy to set up a comparer function and a swapper function. With java, it's possible but much messier.
-            if (helper.instrumented()) {
-                X xlt = helper.get(xs, lt);
-                X xgt = helper.get(xs, gt);
-                X x = xs[i]; // no hit since i = lt
-                while (i <= gt) {
-                    // Each time around the loop, we invoke: 2, 1, or 1 hits; 1, 2, or 2 lookups
-                    if (helper.compare(x, v1) < 0) { // no hits, one lookup
-                        helper.swapVW(xlt, x, xs, lt++, i++); // no hits or lookups
-                        x = helper.get(xs, i); // one hit
-                        xlt = helper.get(xs, lt); // one hit (CONSIDER is this correct?)
-                        if (i == gt) xgt = x;
-                    } else if (helper.compare(x, v2) > 0) { // no hits, one lookup (but it's already in cache)
-                        helper.swapVW(x, xgt, xs, i, gt--); // no hits or lookups
-                        if (i == lt) xlt = xgt;
-                        x = xgt;
-                        xgt = helper.get(xs, gt); // one hit
-                    } else {
-                        i++;
-                        x = helper.get(xs, i); // one hit
-                    }
-                }
-                if (p1 != lt - 1) helper.swap(xs, p1, --lt);
-                if (p2 != gt + 1) helper.swap(xs, p2, ++gt);
-            } else {
-                while (i <= gt) {
-                    X x = xs[i];
-                    if (x.compareTo(v1) < 0) {
-                        swap(xs, lt++, i++);
-                    } else if (x.compareTo(v2) > 0) {
-                        swap(xs, i, gt--);
-                    } else i++;
-                }
-                swap(xs, p1, --lt);
-                swap(xs, p2, ++gt);
+            while (i <= gt) {
+                X x = helper.get(xs, i);
+                if (helper.compare(x, v1) < 0) {
+                    helper.swap(xs, lt++, i++);
+                } else if (helper.compare(x, v2) > 0) {
+                    helper.swap(xs, i, gt--);
+                } else i++;
             }
+            if (p1 != lt - 1) helper.swap(xs, p1, --lt);
+            if (p2 != gt + 1) helper.swap(xs, p2, ++gt);
 
             List<Partition<X>> partitions = new ArrayList<>();
             partitions.add(new Partition<>(xs, p1, lt));

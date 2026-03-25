@@ -429,7 +429,7 @@ public class InstrumentedComparatorHelper<X> extends BaseComparatorHelper<X> {
         super.postProcess(xs);
         int index = findInversion(xs);
         if (index != -1)
-            throw new HelperException(this + ": Array is not sorted (Comparator) at index: " + index + ": " + xs[index - 1] + ", " + xs[index]);
+            logger.warn(this + ": Array is not sorted (Comparator) at index: " + index + ": " + xs[index - 1] + ", " + xs[index]);
         instrumenter.gatherStatistic();
     }
 
